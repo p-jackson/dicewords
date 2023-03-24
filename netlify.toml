@@ -1,0 +1,6 @@
+[[edge_functions]]
+function = "eleventy-edge"
+path = "/*"
+
+[dev]
+targetPort = 8088

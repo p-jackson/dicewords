@@ -5,7 +5,9 @@ layout: layout.liquid
 <strong>Your new passphrase is:</strong>
 
 <div class="phrase-container">
-  {% for word in phrase %}
-    <div class="word">{{ word | escape }}</div>
-  {% endfor %}
+  {% edge %}
+    {% for word in phrase %}
+      <div class="word">{{ word | escape }}</div>
+    {% endfor %}
+  {% endedge %}
 </div>

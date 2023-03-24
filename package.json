@@ -5,11 +5,13 @@
   "description": "Website to generate passwords using dicewords",
   "scripts": {
     "build": "eleventy",
-    "start": "eleventy --serve --port=8088"
+    "start": "eleventy --serve --port=8088",
+    "start:netlify": "netlify dev"
   },
   "author": "Philip Jackson <p-jackson@live.com>",
   "license": "MPL-2.0",
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.0"
+    "@11ty/eleventy": "^2.0.0",
+    "netlify-cli": "^13.2.1"
   }
 }
