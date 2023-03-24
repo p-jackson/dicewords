@@ -2,5 +2,10 @@
 function = "eleventy-edge"
 path = "/*"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; style-src 'unsafe-inline' 'self';"
+
 [dev]
 targetPort = 8088
