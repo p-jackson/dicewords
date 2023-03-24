@@ -5,13 +5,14 @@ body {
    line-height: 1.4;
    margin: 0 auto;
    max-width: 800px;
+   padding: 0 1rem;
  }
  
  aside {
    background: #ffb7b7;
    border: 2px solid #fc9191;
    margin: 1rem 0;
-   padding: 1.4rem 2.3rem;
+   padding: 1.4rem;
  }
  
  .phrase-container {
