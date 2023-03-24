@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diceword Passwords</title>
+    <style>
+      {% include "styles.css" %}
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Diceword Passwords</h1>
+    </header>
+    <main>
+      <aside>
+        <strong>You might not want to trust the passwords generated on this
+          page!</strong>
+        I created this generator primarily for learning how to create sites in
+        Eleventy so I might be creating passwords on the server where I have
+                access to them. Or I might not. No guarantees.
+      </aside>
+      {{ content }}
+    </main>
+  </body>
+</html>
