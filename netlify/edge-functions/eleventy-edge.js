@@ -20,7 +20,7 @@ export default async (request, context) => {
         const formData = await request.formData();
 
         const wordCountParam = parseInt(formData.get("word-count") ?? "", 10);
-        const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
+        const wordCount = isNaN(wordCountParam) ? 6 : wordCountParam;
         const dictionary = formData.get("dictionary") ?? "reinhold";
 
         const cookieValue = await createSignedCookie(
@@ -58,7 +58,7 @@ export default async (request, context) => {
       await readCookieString(request);
 
     const wordCountParam = parseInt(wordCountAsStr, 10);
-    const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
+    const wordCount = isNaN(wordCountParam) ? 6 : wordCountParam;
 
     const [phrase, totalEntropy, entropyPerCharacter] = generate(wordCount, dictionary);
 
