@@ -3,6 +3,18 @@ import {
   precompiledAppData,
 } from "./_generated/eleventy-edge-app.js";
 import { generate } from "./generation/generate.ts";
+import { encode as encodeBase64 } from "https://deno.land/std@0.182.0/encoding/base64.ts";
+import { load as loadDotEnv } from "https://deno.land/std@0.182.0/dotenv/mod.ts";
+
+await loadDotEnv({ export: true });
+
+const cookieSecretKey = await crypto.subtle.importKey(
+  "raw",
+  stringToArrayBuffer(Deno.env.get("COOKIE_SECRET")),
+  { name: "HMAC", hash: "SHA-256" },
+  false,
+  ["sign"]
+);
 
 export default async (request, context) => {
   try {
@@ -14,12 +26,16 @@ export default async (request, context) => {
         const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
         const dictionary = formData.get("dictionary") ?? "reinhold";
 
+        const cookieValue = await createSignedCookie(
+          `${dictionary},${wordCount}`
+        );
+
         return new Response(null, {
           status: 302,
           statusText: "Found",
           headers: {
             Location: request.url,
-            "Set-Cookie": `state=${dictionary},${wordCount}; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=Strict;`,
+            "Set-Cookie": cookieValue,
           },
         });
       } catch (e) {
@@ -42,8 +58,7 @@ export default async (request, context) => {
     });
 
     const [dictionary = "reinhold", wordCountAsStr = ""] =
-      request.headers.get("Cookie")?.split(";")[0]?.split("=")[1]?.split(",") ??
-      [];
+      await readCookieString(request);
 
     const wordCountParam = parseInt(wordCountAsStr, 10);
     const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
@@ -62,3 +77,51 @@ export default async (request, context) => {
     return context.next(e);
   }
 };
+
+async function readCookieString(request) {
+  const headerValue = request.headers.get("Cookie");
+  if (!headerValue) {
+    return [];
+  }
+
+  const [value, requestSignature] =
+    headerValue.split(";")[0]?.split("state=")[1]?.split(".") ?? [];
+  const cookieString = createCookieString(value);
+
+  const newSignature = await crypto.subtle.sign(
+    { name: "HMAC" },
+    cookieSecretKey,
+    stringToArrayBuffer(cookieString)
+  );
+
+  if (encodeBase64(newSignature) !== requestSignature) {
+    return [];
+  }
+
+  return headerValue.split(";")[0]?.split("=")[1]?.split(/[,\.]/) ?? [];
+}
+
+async function createSignedCookie(value) {
+  const cookieString = createCookieString(value);
+
+  const signature = await crypto.subtle.sign(
+    { name: "HMAC" },
+    cookieSecretKey,
+    stringToArrayBuffer(cookieString)
+  );
+
+  return createCookieString(value + "." + encodeBase64(signature));
+}
+
+function createCookieString(value) {
+  return `state=${value}; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=Strict;`;
+}
+
+function stringToArrayBuffer(str) {
+  const buf = new ArrayBuffer(str.length * 2); // Each character in JavaScript is 2 bytes (UTF-16)
+  const bufView = new Uint16Array(buf);
+  for (let i = 0; i < str.length; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
