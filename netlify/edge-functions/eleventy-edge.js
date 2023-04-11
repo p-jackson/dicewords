@@ -60,12 +60,14 @@ export default async (request, context) => {
     const wordCountParam = parseInt(wordCountAsStr, 10);
     const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
 
-    const phrase = generate(wordCount, dictionary);
+    const [phrase, totalEntropy, entropyPerCharacter] = generate(wordCount, dictionary);
 
     edge.config((eleventyConfig) => {
       eleventyConfig.addGlobalData("phrase", phrase);
       eleventyConfig.addGlobalData("wordCount", wordCount);
       eleventyConfig.addGlobalData("dictionary", dictionary);
+      eleventyConfig.addGlobalData("totalEntropy", totalEntropy);
+      eleventyConfig.addGlobalData("entropyPerCharacter", entropyPerCharacter);
     });
 
     return await edge.handleResponse();

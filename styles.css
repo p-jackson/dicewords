@@ -60,7 +60,7 @@ button[type="submit"] {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding-top: 0.5rem;
+  padding: 0.5rem 0 1.7rem;
 }
 
 .word {
@@ -69,4 +69,10 @@ button[type="submit"] {
   font-weight: 700;
   margin: 0.4rem;
   padding: 0.2rem 0.6rem;
+}
+
+.entropy-grid {
+  display: grid;
+  grid-template-columns: max-content auto;
+  gap: 0.2rem 0.5rem;
 }

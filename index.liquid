@@ -43,3 +43,10 @@ data:
   <div class="word gray">{{ word | escape }}</div>
   {% endfor %} {% endedge %}
 </div>
+
+<div class="entropy-grid">
+  <div>Total Entropy:</div>
+  <div>{% edge %}{{ totalEntropy }}{% endedge %}</div>
+  <div>Entropy-per-character:</div>
+  <div>{% edge %}{{ entropyPerCharacter }}{% endedge %}</div>
+</div>

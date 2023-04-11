@@ -14,7 +14,16 @@ export function generate(wordCount: number, dictionary: string) {
       .join("");
   });
 
-  return phrase.map((word) => wordlist[word]);
+  const result = phrase.map((word) => wordlist[word]);
+
+  const totalEntropy = Math.log2(Math.pow(Math.pow(6, diceCount), wordCount));
+  const totalCharacters = result.join(" ").length;
+
+  return [
+    result,
+    Math.floor(totalEntropy),
+    Math.round((totalEntropy / totalCharacters) * 10) / 10
+  ]
 }
 
 function getWordlist(dictionary: string): [Record<string, string>, number] {
