@@ -6,6 +6,34 @@ import { generate } from "./generation/generate.ts";
 
 export default async (request, context) => {
   try {
+    if (request.method === "POST") {
+      try {
+        const formData = await request.formData();
+
+        const wordCountParam = parseInt(formData.get("word-count") ?? "", 10);
+        const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
+        const dictionary = formData.get("dictionary") ?? "reinhold";
+
+        return new Response(null, {
+          status: 302,
+          statusText: "Found",
+          headers: {
+            Location: request.url,
+            "Set-Cookie": `state=${dictionary},${wordCount}; Max-Age=86400; Path=/; HttpOnly; Secure; SameSite=Strict;`,
+          },
+        });
+      } catch (e) {
+        console.error(e);
+        return new Response(null, {
+          status: 302,
+          statusText: "Found",
+          headers: {
+            Location: request.url,
+          },
+        });
+      }
+    }
+
     const edge = new EleventyEdge("edge", {
       request,
       context,
@@ -13,10 +41,12 @@ export default async (request, context) => {
       cookies: [],
     });
 
-    const { searchParams } = new URL(request.url);
-    const wordCountParam = parseInt(searchParams.get("word-count") ?? "", 10);
+    const [dictionary = "reinhold", wordCountAsStr = ""] =
+      request.headers.get("Cookie")?.split(";")[0]?.split("=")[1]?.split(",") ??
+      [];
+
+    const wordCountParam = parseInt(wordCountAsStr, 10);
     const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
-    const dictionary = searchParams.get("dictionary") ?? "reinhold";
 
     const phrase = generate(wordCount, dictionary);
 
