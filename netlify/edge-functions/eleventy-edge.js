@@ -6,9 +6,13 @@ import { generate } from "./generation/generate.ts";
 import { encode as encodeBase64 } from "https://deno.land/std@0.182.0/encoding/base64.ts";
 import { load as loadDotEnv } from "https://deno.land/std@0.182.0/dotenv/mod.ts";
 
-if (await Deno.permissions.query({ name: "read", path: ".env" })) {
+if (
+  (await Deno.permissions.query({ name: "read", path: ".env" })).state ===
+  "granted"
+) {
   await loadDotEnv({ export: true });
 }
+
 
 const cookieSecretKey = await crypto.subtle.importKey(
   "raw",
