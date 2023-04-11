@@ -1,13 +1,45 @@
 ---
 layout: layout.liquid
+data:
+  dictionaries:
+    - id: reinhold
+      name: Arnold G. Reinhold's original
+    - id: eff-long
+      name: EFF 5 dice word list
+    - id: eff-short
+      name: EFF 4 dice word list
+    - id: eff-short2
+      name: EFF 4 dice word list (potentially auto-completable)
 ---
+
+<form method="get" class="region">
+  <label for="dictionary">Dictionary:</label>
+  <select id="dictionary" name="dictionary" class="gray btn">
+    {% edge data %}
+      {% for d in dictionaries %}
+        <option value="{{ d.id }}" {% if d.id == dictionary %}selected{% endif %}>{{ d.name }}</option>
+      {% endfor %}
+    {% endedge %}
+  </select>
+  <label for="word-count">Number of words:</label>
+  <div>
+    <input
+      type="range"
+      id="word-count"
+      name="word-count"
+      min="3"
+      max="10"
+      value="{% edge %}{{ wordCount }}{% endedge %}"
+    />
+    <span> {% edge %} {{ wordCount }} {% endedge %} </span>
+  </div>
+  <button type="submit" class="gray btn">Generate</button>
+</form>
 
 <strong>Your new passphrase is:</strong>
 
 <div class="phrase-container">
-  {% edge %}
-    {% for word in phrase %}
-      <div class="word">{{ word | escape }}</div>
-    {% endfor %}
-  {% endedge %}
+  {% edge %} {% for word in phrase %}
+  <div class="word gray">{{ word | escape }}</div>
+  {% endfor %} {% endedge %}
 </div>

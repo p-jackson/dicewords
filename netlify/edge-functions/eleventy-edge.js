@@ -10,13 +10,20 @@ export default async (request, context) => {
       request,
       context,
       precompiled: precompiledAppData,
-
-      // default is [], add more keys to opt-in e.g. ["appearance", "username"]
       cookies: [],
     });
 
+    const { searchParams } = new URL(request.url);
+    const wordCountParam = parseInt(searchParams.get("word-count") ?? "", 10);
+    const wordCount = isNaN(wordCountParam) ? 5 : wordCountParam;
+    const dictionary = searchParams.get("dictionary") ?? "reinhold";
+
+    const phrase = generate(wordCount, dictionary);
+
     edge.config((eleventyConfig) => {
-      eleventyConfig.addGlobalData("phrase", generate());
+      eleventyConfig.addGlobalData("phrase", phrase);
+      eleventyConfig.addGlobalData("wordCount", wordCount);
+      eleventyConfig.addGlobalData("dictionary", dictionary);
     });
 
     return await edge.handleResponse();
