@@ -38,12 +38,17 @@ form {
 select {
   margin: 0.4rem 0 0.8rem;
   padding: 0.2rem 0.6rem;
+  max-width: 100%;
+}
+
+.range-container {
+  display: flex;
+  max-width: 100%;
 }
 
 input[type="range"] {
   margin: 0.4rem 0.4rem 0.8rem 0;
   width: 400px;
-  max-width: 100%;
 }
 
 button[type="submit"] {
